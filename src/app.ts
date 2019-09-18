@@ -1,34 +1,45 @@
 import fetch from "node-fetch";
-import https from "https";
 
-fetch('https://api.twitch.tv/kraken/games/top', {
-    method: 'GET',
-    headers: { 'Client-ID': '?', 'Accept': 'application/vnd.twitchtv.v5+json' },
-})
-    .then(res => res.json())
-    .then(json => {
-        json.top.forEach((element: any) => {
-            console.log(element.game.name + " (" + element.viewers + " viewers)");
-            callApi(element.game.name, element.viewers);
-        });
-    });
+const TWITCH_URL = process.env.TWITCH_URL || "";
+const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID || "";
+const API_URL = process.env.API_URL || "";
+const API_PATH = process.env.API_PATH || "";
 
-function callApi(gameName: string, viewerCount: string) {
-    const options = {
-        hostname: 'localhost',
-        port: 8080,
-        path: '/game',
-        method: 'POST',
-        body: { game: gameName, viewerCount: viewerCount },
-        headers: { 'Content-Type': 'application/json' }
+const main = async () => {
+  const response = await fetch(TWITCH_URL, {
+    method: "GET",
+    headers: {
+      "Client-ID": TWITCH_CLIENT_ID,
+      Accept: "application/vnd.twitchtv.v5+json"
     }
-    https.request(options, (response) => {
-        if (response.statusCode === 200) {
-            console.log("Success")
-        } else {
-            console.error("Failed")
-        }
-    }).on('error', (e) => {
-        console.error(e);
-    });
-}
+  });
+
+  if (!response.ok) {
+    throw response;
+  }
+
+  const result = await response.json();
+
+  await Promise.all(
+    result.top.map((element: any) => {
+      saveGameViewerCount(element.game.name, element.viewers);
+    })
+  );
+};
+
+const saveGameViewerCount = async (gameName: string, viewerCount: string) => {
+  const response = await fetch(API_URL + API_PATH, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ game: gameName, viewerCount: viewerCount })
+  });
+  if (!response.ok) {
+    throw response;
+  }
+};
+
+setInterval(() => {
+  main()
+    .then(() => console.log("Successful adding twitch rows"))
+    .catch(err => console.error(err));
+}, 60 * 1000);
