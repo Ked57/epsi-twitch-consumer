@@ -22,7 +22,9 @@ const main = async () => {
 
   await Promise.all(
     result.top.map((element: any) => {
-      saveGameViewerCount(element.game.name, element.viewers);
+      saveGameViewerCount(element.game.name, element.viewers).catch(err =>
+        console.error(err)
+      );
     })
   );
 };
@@ -42,4 +44,4 @@ setInterval(() => {
   main()
     .then(() => console.log("Successful adding twitch rows"))
     .catch(err => console.error(err));
-}, 60 * 1000);
+}, 10 * 1000);
