@@ -10,7 +10,7 @@ pipeline {
             steps {
                 sh 'npm run build' 
             }
-        },
+        } 
         stage('Deploy') { 
             steps {
                 sh 'sudo npm install -g caprover' ,

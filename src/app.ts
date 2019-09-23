@@ -31,7 +31,7 @@ const main = async () => {
 
 const saveGameViewerCount = async (gameName: string, viewerCount: string) => {
   const response = await fetch(API_URL + API_PATH, {
-    method: "POST",
+    method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ game: gameName, viewerCount: viewerCount })
   });
@@ -44,4 +44,8 @@ setInterval(() => {
   main()
     .then(() => console.log("Successful adding twitch rows"))
     .catch(err => console.error(err));
-}, 10 * 1000);
+}, 60 * 1000);
+
+main()
+  .then(() => console.log("Successful adding twitch rows"))
+  .catch(err => console.error(err));
