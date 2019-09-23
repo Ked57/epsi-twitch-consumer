@@ -13,7 +13,7 @@ pipeline {
         } 
         stage('Deploy') { 
             steps {
-                sh 'sudo npm install -g caprover' ,
+                sh 'sudo npm install -g caprover'
                 sh 'caprover deploy -h $DOMAIN -p $PASSWORD -b master -a $APPNAME'
             }
         }
