@@ -6,7 +6,7 @@ const API_URL = process.env.API_URL || "";
 const API_PATH = process.env.API_PATH || "";
 
 const main = async () => {
-  const response = await fetch(TWITCH_URL, {
+  const response = await fetch(TWITCH_URL + "?limit=100", {
     method: "GET",
     headers: {
       "Client-ID": TWITCH_CLIENT_ID,
@@ -30,7 +30,7 @@ const main = async () => {
 };
 
 const saveGameViewerCount = async (gameName: string, viewerCount: string) => {
-  const response = await fetch(API_URL + API_PATH, {
+  const response = await fetch(API_URL + API_PATH , {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ game: gameName, viewerCount: viewerCount })
