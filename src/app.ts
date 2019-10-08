@@ -39,10 +39,10 @@ const main = async () => {
 const saveGameViewerCount = async (gameName: string, viewerCount: string) => {
   const response = await fetch(`${API_URL}/${API_PATH}`, {
     method: "PUT",
-    headers: { 
+    headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${API_TOKEN}`
-     },
+      Authorization: `Bearer ${API_TOKEN}`
+    },
     body: JSON.stringify({ game: gameName, viewerCount: viewerCount })
   });
   if (!response.ok) {
