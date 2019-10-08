@@ -36,7 +36,8 @@ const main = async () => {
 
 // Call an API with game name and viewer count
 const saveGameViewerCount = async (gameName: string, viewerCount: string) => {
-  const response = await fetch(API_URL + API_PATH , {
+  console.log(`${gameName} : ${viewerCount}`);
+  const response = await fetch(`${API_URL}/${API_PATH}` , {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ game: gameName, viewerCount: viewerCount })
