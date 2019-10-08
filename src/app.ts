@@ -4,6 +4,7 @@ const TWITCH_URL = process.env.TWITCH_URL || "";
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID || "";
 const API_URL = process.env.API_URL || "";
 const API_PATH = process.env.API_PATH || "";
+const API_TOKEN = process.env.API_TOKEN || "";
 
 // Get top 100 games played on twitch
 // According to the official documentation of twitch,
@@ -36,10 +37,12 @@ const main = async () => {
 
 // Call an API with game name and viewer count
 const saveGameViewerCount = async (gameName: string, viewerCount: string) => {
-  console.log(`${gameName} : ${viewerCount}`);
   const response = await fetch(`${API_URL}/${API_PATH}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${API_TOKEN}`
+     },
     body: JSON.stringify({ game: gameName, viewerCount: viewerCount })
   });
   if (!response.ok) {
