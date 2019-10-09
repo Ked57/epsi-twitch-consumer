@@ -13,8 +13,14 @@ const MQ_CHANNEL = process.env.MQ_CHANNEL || "";
 let ch: amqp.Channel;
 amqp.connect(
   `amqp://${MQ_USERNAME}:${MQ_PASSWORD}@${MQ_HOST}:${MQ_PORT}`,
-  function(err, conn) {
-    conn.createChannel(function(err, channel) {
+  (err, conn) => {
+    if (err) {
+      throw new Error(err);
+    }
+    conn.createChannel((err, channel) => {
+      if (err) {
+        throw new Error(err);
+      }
       channel.assertQueue(MQ_CHANNEL, {
         durable: false
       });
