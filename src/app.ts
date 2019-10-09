@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import amqp from 'amqplib/callback_api';
+import amqp from "amqplib/callback_api";
 
 const TWITCH_URL = process.env.TWITCH_URL || "";
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID || "";
@@ -11,9 +11,10 @@ const MQ_CHANNEL = process.env.MQ_CHANNEL || "";
 
 // Init RabbitMQ Channel
 let ch: amqp.Channel;
-amqp.connect(`amqp://${MQ_USERNAME}:${MQ_PASSWORD}@${MQ_HOST}:${MQ_PORT}`, function (err, conn) {
-  conn.createChannel(function (err, channel) {
-      
+amqp.connect(
+  `amqp://${MQ_USERNAME}:${MQ_PASSWORD}@${MQ_HOST}:${MQ_PORT}`,
+  function(err, conn) {
+    conn.createChannel(function(err, channel) {
       channel.assertQueue(MQ_CHANNEL, {
         durable: false
       });
@@ -21,11 +22,11 @@ amqp.connect(`amqp://${MQ_USERNAME}:${MQ_PASSWORD}@${MQ_HOST}:${MQ_PORT}`, funct
       ch = channel;
 
       main()
-      .then(() => console.log("Successful adding twitch rows"))
-      .catch(err => console.error(err));
-  });
-});
-
+        .then(() => console.log("Successful adding twitch rows"))
+        .catch(err => console.error(err));
+    });
+  }
+);
 
 // Get top 100 games played on twitch
 // According to the official documentation of twitch,
@@ -46,15 +47,19 @@ const main = async () => {
 
   const result = await response.json();
 
-  // Prepare payload 
+  // Prepare payload
   var payLoad = [] as any[];
-  var dateInNanoSecond = Date.now()*1000000;
+  var dateInNanoSecond = Date.now() * 1000000;
   result.top.map((element: any) => {
-    payLoad.push({game: element.game.name, viewerCount: element.viewers, timestamp: dateInNanoSecond});
+    payLoad.push({
+      game: element.game.name,
+      viewerCount: element.viewers,
+      timestamp: dateInNanoSecond
+    });
   });
-  
+
   // Send message to rabbitMQ
-  ch.sendToQueue(MQ_CHANNEL, Buffer.from(JSON.stringify({points: payLoad})));
+  ch.sendToQueue(MQ_CHANNEL, Buffer.from(JSON.stringify({ points: payLoad })));
 };
 
 // Get twitch game data each minute
