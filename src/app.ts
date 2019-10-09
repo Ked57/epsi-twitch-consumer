@@ -48,12 +48,13 @@ const main = async () => {
 
   // Prepare payload 
   var payLoad = [] as any[];
+  var dateInNanoSecond = Date.now()*1000000;
   result.top.map((element: any) => {
-    payLoad.push({game: element.game.name, viewerCount: element.viewers});
+    payLoad.push({game: element.game.name, viewerCount: element.viewers, timestamp: dateInNanoSecond});
   });
   
   // Send message to rabbitMQ
-  ch.sendToQueue(MQ_CHANNEL, Buffer.from(JSON.stringify(payLoad)));
+  ch.sendToQueue(MQ_CHANNEL, Buffer.from(JSON.stringify({points: payLoad})));
 };
 
 // Get twitch game data each minute
