@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 import amqp from "amqplib/callback_api";
+import { preparePayload } from "./payload";
 
 const TWITCH_URL = process.env.TWITCH_URL || "";
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID || "";
@@ -51,18 +52,10 @@ const main = async () => {
     throw response;
   }
 
-  const result = await response.json();
-
+  let result = await response.json();
+  console.log(result);
   // Prepare payload
-  var payLoad = [] as any[];
-  var dateInNanoSecond = Date.now() * 1000000;
-  result.top.map((element: any) => {
-    payLoad.push({
-      game: element.game.name,
-      viewerCount: element.viewers,
-      timestamp: dateInNanoSecond
-    });
-  });
+  let payLoad = preparePayload(result);
 
   // Send message to rabbitMQ
   ch.sendToQueue(MQ_CHANNEL, Buffer.from(JSON.stringify({ points: payLoad })));
